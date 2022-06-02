@@ -100,21 +100,17 @@ class PassFileIO {
   }
 
   // ignore: public_member_api_docs
-  Future<PassFile> saveFromUrl({required String url, required String token}) async {
+  Future<File> saveFromUrl({required String url, required String token}) async {
     final passId = _generatePassId();
     final passFile = await _createPass(passId: passId);
     final passDir = Directory(path.withoutExtension(passFile.path));
     final Dio dio = Dio();
     dio.options.headers['Authorization'] = 'Bearer $token';
     final response = await dio.download(url, passFile.path);
-    print(response.data);
     if (response.statusCode == 200) {
       await _unpackPass(passPath: passFile.path);
-      return PassParser(
-        passId: passId,
-        unpackedPassDirectory: passDir,
-        passFile: passFile,
-      ).parse();
+
+      return passFile;
     }
     throw Exception('Unable to download pass file at specified url');
   }
