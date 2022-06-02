@@ -107,6 +107,7 @@ class PassFileIO {
     final Dio dio = Dio();
     dio.options.headers['Authorization'] = 'Bearer $token';
     final response = await dio.download(url, passFile.path);
+    print(response.data);
     if (response.statusCode == 200) {
       await _unpackPass(passPath: passFile.path);
       return PassParser(
